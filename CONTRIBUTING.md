@@ -140,8 +140,7 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/)
 reason in the body when it is not obvious.
 
 `main` is protected: changes arrive through pull requests and merge only when every
-required check passes. The pull request template asks whether generative AI was used;
-either answer is fine, but the `scpe` check fails if the question is left unanswered.
+required check passes.
 
 Before opening a pull request:
 
