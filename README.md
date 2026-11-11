@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/augbastos/deputy-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/augbastos/deputy-mcp/actions/workflows/ci.yml)
 [![Security](https://github.com/augbastos/deputy-mcp/actions/workflows/security.yml/badge.svg)](https://github.com/augbastos/deputy-mcp/actions/workflows/security.yml)
+[![Release](https://img.shields.io/github/v/release/augbastos/deputy-mcp)](https://github.com/augbastos/deputy-mcp/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Ask Claude *"when do I work next?"* and get the answer from your
@@ -22,10 +23,15 @@ employee account.
 - "Clock me in." *(writes enabled)*
 - "Take the open shift on Saturday." *(writes enabled; asks you to confirm first)*
 
+## Requirements
+
+- [uv](https://docs.astral.sh/uv/)
+- Python 3.11 or newer
+- A Deputy account (see the access modes below)
+
 ## Install
 
-Needs [uv](https://docs.astral.sh/uv/) and Python 3.11 or newer. Choose your access
-mode first:
+Choose your access mode first:
 
 | Mode | Who it's for | Start here |
 |---|---|---|
@@ -70,6 +76,7 @@ claude mcp add deputy \
 ### Codex CLI
 
 For your own roster, replace `...` with your private calendar feed URL:
+
 ```bash
 codex mcp add deputy --env DEPUTY_CALENDAR_URL=... -- uvx deputy-mcp
 ```
@@ -77,9 +84,12 @@ codex mcp add deputy --env DEPUTY_CALENDAR_URL=... -- uvx deputy-mcp
 The first `uvx` run downloads dependencies; if Codex reports the tools as unavailable,
 set `startup_timeout_sec = 60` under `[mcp_servers.deputy]` in `~/.codex/config.toml`.
 
-Claude Desktop users: download the `.mcpb` bundle from the [Releases page](https://github.com/augbastos/deputy-mcp/releases)
+### Claude Desktop
+
+Download the `.mcpb` bundle from the [Releases page](https://github.com/augbastos/deputy-mcp/releases)
 and drag it onto Settings → Extensions (double-clicking may not open it on Windows). Fill
 in one access mode under Configure, then ask Claude to sign you in.
+
 Other MCP clients and Docker: see [other ways to install](docs/DESIGN.md#other-ways-to-install).
 All settings are listed in [`.env.example`](.env.example).
 
@@ -90,6 +100,7 @@ All settings are listed in [`.env.example`](.env.example).
   `deputy_get_my_calendar_url`, `deputy_get_areas`
 - **Team** (manager access): `deputy_get_team_roster`, `deputy_who_is_working`,
   `deputy_get_employee_info`, `deputy_search_shifts`
+- **Sign-in** (OAuth credentials set): `deputy_login`
 - **Actions** (only with `DEPUTY_ALLOW_WRITES=true`): `deputy_clock_in`,
   `deputy_clock_out`, `deputy_set_unavailability`,
   `deputy_claim_open_shift`
@@ -103,6 +114,48 @@ All settings are listed in [`.env.example`](.env.example).
 - **Credential protection**: by default, tokens go only to `https://*.deputy.com`
   and OAuth tokens live in your OS keychain; errors are scrubbed of secrets before
   an agent sees them.
+
+## Command line
+
+The same client works as a command-line tool. With no subcommand, `deputy-mcp` starts
+the MCP server (stdio by default; local HTTP is described in the
+[design notes](docs/DESIGN.md#local-http-transport)).
+
+```bash
+deputy-mcp whoami            # who the credentials belong to
+deputy-mcp roster [--team]   # your roster, or everyone's with manager access
+deputy-mcp next [--employee NAME_OR_ID]
+deputy-mcp timesheets | who | areas
+deputy-mcp login [--no-browser] | logout
+```
+
+Add `--json` for machine output.
+
+## Develop and test
+
+```bash
+uv sync                  # runtime and dev dependencies
+uv run pytest            # no network needed
+uv run ruff check .
+uv run mypy
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full list of checks.
+
+## Layout
+
+| Path | Contents |
+|---|---|
+| `src/deputy_mcp/` | The package: `client/` (Deputy API), `server/` (MCP tools, resources, prompts), CLI, OAuth |
+| `tests/` | Unit, client, server and agent-interface tests; `live/` is opt-in and never runs in CI |
+| `docs/` | [Design notes](docs/DESIGN.md) |
+| `examples/` | A mock Deputy server (`mock_deputy.py`) |
+| `.github/workflows/` | CI, security scans and release |
+
+## Releases
+
+Pushing a `v*` tag runs the release workflow (`.github/workflows/release.yml`). Release
+notes are in the [changelog](CHANGELOG.md).
 
 ## Status
 
