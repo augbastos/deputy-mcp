@@ -142,6 +142,10 @@ reason in the body when it is not obvious.
 `main` is protected: changes arrive through pull requests and merge only when every
 required check passes.
 
+Required checks are `Safety` and `CI passed` in the `CI` workflow. `Safety` checks
+PR commits and critical paths using the base revision policy. `CI passed` requires
+every CI job to succeed; only `Safety` may be skipped outside pull requests.
+
 Before opening a pull request:
 
 - [ ] `pytest`, `ruff check`, `ruff format --check` and `mypy` pass locally.

@@ -1,6 +1,6 @@
 name: Security
 
-# Two scanners with different jobs, both cheap enough to run on every change:
+# Weekly security scans complement the same scanners in CI:
 # - CodeQL finds code-level flaws (injection, clear-text logging of credentials,
 #   unsafe URL handling) in the Python source.
 # - Gitleaks scans the full git history for committed secrets. This project handles
@@ -9,11 +9,6 @@ name: Security
 # The weekly run catches new CodeQL queries and advisories on unchanged code.
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:  # manual run, e.g. right after the repository becomes public
   schedule:
     - cron: "17 6 * * 1"
 
