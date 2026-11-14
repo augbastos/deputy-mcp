@@ -117,7 +117,7 @@ class WorkflowTests(unittest.TestCase):
                 ("success", "failure", "skipped", "cancelled"), repeat=2
             ):
                 expected = tests == "success" and (
-                    safety == "success" or (safety == "skipped" and event != "pull_request")
+                    safety == "success" or (safety == "skipped" and event == "push")
                 )
                 needs = json.dumps({"safety": {"result": safety}, "test": {"result": tests}})
                 commands.append(f"EVENT_NAME='{event}' NEEDS_JSON='{needs}' gate >/dev/null 2>&1")
