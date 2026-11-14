@@ -142,6 +142,10 @@ uv run mypy
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full list of checks.
 
+The unified CI workflow reports `Safety` and `CI passed`, the required merge checks.
+It also runs lint, type checks, tests on Linux and Windows, builds, and security scans.
+The Security workflow repeats the scans weekly.
+
 ## Layout
 
 | Path | Contents |
